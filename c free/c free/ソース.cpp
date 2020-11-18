@@ -9,7 +9,7 @@
 
 #pragma region DefineDeclaration
 #define SAVEDIRECTORYPASS "H:\\TypingSaves"
-#define TYPINGDIRECTORYPASS "H:TypingTxtFiles"
+#define TYPINGDIRECTORYPASS "H:\\TypingTxtFiles"
 
 #define TYPINGFILEEXTENSION "txt"
 #define SAVEFILEEXTENSION "bin"
@@ -185,20 +185,26 @@ void SelectTypingFileScene(char fileNames[][FILENAMESIZE], char typingFilePass[]
 	char saveDirectory[] = SAVEDIRECTORYPASS;
 	char typingDirectory[] = TYPINGDIRECTORYPASS;
 
-	while (1) {
-		printf("-----タイピング文章を選択して下さい-----\n");
-		for (int i = 0; i < arrayCount; i++)
-			printf("%d : %s\n", i + 1, fileNames[i]);
-		scanf_s("%d", &pAns);
-		if (pAns < 1 || pAns > arrayCount) {
-			printf("\n 範囲外の数値です\n");
-			printf("何かキーを押してください...");
-			tmp = _getch();
-			system("cls");
-		}
-		else
-			break;
-	};
+	if (arrayCount == -1) {
+		printf("タイピングファイルがありません\nタイピングフォルダを確認してください\n%s\n", typingDirectory);
+		exit(EXIT_FAILURE);
+	}
+	else {
+		while (1) {
+			printf("-----タイピング文章を選択して下さい-----\n");
+			for (int i = 0; i < arrayCount; i++)
+				printf("%d : %s\n", i + 1, fileNames[i]);
+			scanf_s("%d", &pAns);
+			if (pAns < 1 || pAns > arrayCount) {
+				printf("\n 範囲外の数値です\n");
+				printf("何かキーを押してください...");
+				tmp = _getch();
+				system("cls");
+			}
+			else
+				break;
+		};
+	}
 	GetFilePass(typingDirectory, fileNames[pAns - 1], typingFilePass, typingFileExtension);
 	GetFilePass(saveDirectory, fileNames[pAns - 1], saveFilePass, saveFileExtension);
 	system("cls");
@@ -325,6 +331,10 @@ int GetFileNameOfDirectory(char fileNames[][FILENAMESIZE], char typingDirectoryP
 		}
 	} while (_findnext(fh, &fdata) == 0);
 	_findclose(fh);
+
+	if (fileCount == 0) {
+		return -1;
+	}
 
 	return fileCount;
 }
